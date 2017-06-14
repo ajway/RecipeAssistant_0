@@ -1,0 +1,89 @@
+<html>
+  <head>
+    <title>RECIPE PAGE</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/recipe.css">
+    <link href="https://fonts.googleapis.com/css?family=Jura:300|Alegreya+Sans+SC:300|Alegreya+Sans" rel="stylesheet">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script> 
+    <script src="assets/js/script.js"></script>
+  </head>
+  <body>
+    <!-- Page Wrapper, contains all sections -->
+    <div class="page-wrapper">
+      <!-- First Section, contains Navbar and Logo -->
+      <section class="section" id="landing-section">
+        <!-- Navbar (Home, Events, Members, Join Us) -->
+        <div class="container">
+          <div id="navbar">
+          <div id="back-icon">
+            <script>
+            function goBack() {
+                window.history.back()
+            }
+            </script>
+            <a href="javascript:goBack()"><span class="glyphicon glyphicon-triangle-left"></span></a>
+          </div>
+
+          <h1>SUSHI</h1>
+
+          <div id="search-icon">
+            <span class="glyphicon glyphicon-search"></span>
+          </div>
+
+          <div id="home-icon">
+            <a href="home.html"><span class="glyphicon glyphicon-home"></span></a>
+          </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="section" id="food-image-section">
+        <div id="food-image-container">
+          <img id="food-image" src="https://i.ytimg.com/vi/jPLJbSp6vKY/maxresdefault.jpg">
+        </div>
+      </section>
+      <section class="section" id="recipe-section">
+
+        
+        <div class="container-fluid">
+          <div class="col-sm-3"></div>
+          <div class="col-sm-6">
+            <div class="recipe-container">
+            <div class="recipe-column" id="ingredients">
+              <ul>
+                <li>1 cup of rice</li>
+                <li>1 sheet of seaweed</li>
+                <li>3 slices of sashimi-grade tuna</li>
+                <li>3 slices of sashimi-grade salmon</li>
+                <li>1/2 cup of rice vinegar</li>
+                <li>
+              </ul>
+            </div>
+            <div class="recipe-column" id="preparation">
+              <h2>Preparation</h2>
+              <p>1. Put the rice on the seaweed.</p>
+              <p>2. Put the fish on the rice.</p>
+              <p>3. Roll it up.</p>
+            </div>
+            </div>
+          </div>
+          <div class="col-sm-3"></div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <div class="container-fluid-2">
+        <div class="row-2">
+        <div class="col-sm-12">
+          <div id="footer" align="center">© TEAM SANS. CS160 SPRING 2017. ALL RIGHTS RESERVED.</div>
+        </div>
+        </div>
+      </div>
+    </div>
+  
+  </body>
+</html>

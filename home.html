@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<html ng-app="recipeAssistant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RECIPE ASSISTANT</title>
+
+    <!-- Bootstrap -->
+    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="css/home.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Jura:300|Alegreya+Sans+SC:300|Alegreya+Sans" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <script>
+
+    function curClickD(nowName) {
+      // console.log(nowName);
+      var rTitle = document.getElementById('recipe-title');
+      // console.log(nowName);
+      rTitle.innerText = nowName.id.substring(0,nowName.id.length-10).replace(/_/g,' ').toUpperCase();
+
+      dbname = nowName.id.substring(0,nowName.id.length-10).replace(/_/g,' ');
+      $.get("https://kzhe8vy1yd.execute-api.us-east-1.amazonaws.com/prod/TaskWS?TableName=Recipes", function(data){
+        var db = JSON.stringify(data);
+        // console.log(db);
+
+        var parse = JSON.parse(db);
+        var recipeList = parse.Items;
+
+        var direc_in_box = document.getElementById('direc_in_content');
+        var direc_step_box = document.getElementById('direc_step_content');
+        var image_box = document.getElementById('food-image');
+        for (i = 0; i < recipeList.length; i++) {
+
+          var curRecipe = JSON.parse(JSON.stringify(recipeList[i]));
+          // console.log(curRecipe)
+          var curName = curRecipe.RecipeName;
+          var curImage = curRecipe.Image;
+
+          if (curName == dbname) {
+            console.log('happy');
+            console.log(curRecipe.Ingredients);
+            direc_in_box.innerText = curRecipe.Ingredients;
+            direc_step_box.innerText = curRecipe.Directions;
+            image_box.setAttribute('src', curImage);
+          }
+        }
+      })
+    }
+
+    function curClickI(nowName) {
+      var in_box = document.getElementById('in_content');
+
+      console.log('gg');
+      // console.log(parsedName);
+      dbname = nowName.id.substring(0,nowName.id.length-11).replace(/_/g,' ');
+      console.log(dbname);
+
+      $.get("https://kzhe8vy1yd.execute-api.us-east-1.amazonaws.com/prod/TaskWS?TableName=Recipes", function(data){
+        var db = JSON.stringify(data);
+        // console.log(db);
+
+        var parse = JSON.parse(db);
+        var recipeList = parse.Items;
+
+        for (i = 0; i < recipeList.length; i++) {
+
+          var curRecipe = JSON.parse(JSON.stringify(recipeList[i]));
+          // console.log(curRecipe)
+          var curName = curRecipe.RecipeName;
+          var curImage = curRecipe.Image;
+
+          if (curName == dbname) {
+            console.log('happy');
+            console.log(curRecipe.Ingredients);
+
+            document.getElementById('in_list').innerHTML = '';
+            var ingred = curRecipe.Ingredients.split("\n");
+            console.log(ingred);
+            for (i = 0; i < ingred.length; i++) {
+              var label= document.createElement("label");
+              var item = document.createTextNode(" " + ingred[i]);
+              var checkbox = document.createElement('input');
+              checkbox.setAttribute('type', 'checkbox');
+              label.appendChild(checkbox);
+              label.appendChild(item);
+              document.getElementById('in_list').appendChild(label);
+              document.getElementById('in_list').appendChild(document.createElement("br"));
+            }
+
+            // in_content.innerText = curRecipe.Ingredients;
+            break;
+          }
+        }
+      })
+    }
+
+    $(document).ready(function(){
+      $.get("https://kzhe8vy1yd.execute-api.us-east-1.amazonaws.com/prod/TaskWS?TableName=Recipes", function(data){
+        var db = JSON.stringify(data);
+        // console.log(db);
+
+        var parse = JSON.parse(db);
+        var recipeList = parse.Items;
+
+        // console.log(recipeList.length);
+
+        for (i = 0; i < recipeList.length; i++) {
+
+          var curRecipe = JSON.parse(JSON.stringify(recipeList[i]));
+          // console.log(curRecipe)
+          var curName = curRecipe.RecipeName;
+          var curImage = curRecipe.Image;
+
+          // console.log(curName);
+          // console.log(curImage);
+
+          var col = document.createElement('div');
+          col.setAttribute('class', 'col-sm-3');
+          document.getElementById('row-container').appendChild(col);
+
+          var tile = document.createElement('div');
+          tile.setAttribute('class', 'recipe-tile');
+          col.appendChild(tile);
+
+          var filt = document.createElement('div');
+          filt.setAttribute('class', 'filter');
+          tile.appendChild(filt);
+
+          var name = document.createElement('p');
+          name.innerText = curName;
+          filt.appendChild(name);
+
+          var over = document.createElement('div');
+          over.setAttribute('class', 'overlay');
+          tile.appendChild(over);
+
+          var image = document.createElement('img');
+          image.setAttribute('class', 'img-responsive');
+          image.setAttribute('src', curImage);
+          tile.appendChild(image);
+
+          var mods = document.createElement('div');
+          mods.setAttribute('class', 'links');
+          over.appendChild(mods);
+
+          parsedName = curName.replace(/ /g,'_')
+
+          var ingredients = document.createElement('a');
+          // ingredients.setAttribute('href', '#');
+          ingredients.setAttribute('data-toggle', 'modal');
+          ingredients.setAttribute('data-target', '#ingModal');
+          ingredients.setAttribute('id', parsedName + 'ingredients');
+          ingredients.innerText = "\n";
+          var iIcon = document.createElement('span');
+          iIcon.setAttribute('class', 'glyphicon glyphicon-shopping-cart');
+          iIcon.setAttribute('font-size', '20px');
+          var iText = document.createElement('span');
+          iText.innerText = ' INGREDIENTS\n';
+          ingredients.appendChild(iIcon);
+          ingredients.appendChild(iText)
+          // ingredients.setAttribute('id', parsedName );
+          mods.appendChild(ingredients);
+
+          ingredients.setAttribute('onclick', "curClickI" + "(" + String(parsedName + 'ingredients') + ")");
+
+          var directions = document.createElement('a');
+          // directions.setAttribute('href', '#');
+          directions.setAttribute('data-toggle', 'modal');
+          directions.setAttribute('data-target', '#dirModal');
+          directions.setAttribute('id', parsedName + 'directions');
+          directions.setAttribute('internalName', parsedName);
+          // console.log(curName);
+          var dIcon = document.createElement('span');
+          dIcon.setAttribute('class', 'glyphicon glyphicon-th-list');
+          dIcon.setAttribute('font-size', '20px');
+          var dText = document.createElement('span');
+          dText.innerText = ' DIRECTIONS';
+          directions.appendChild(dIcon);
+          directions.appendChild(dText);
+
+          console.log(directions.id);
+          console.log(parsedName);
+          // directions.setAttribute('onclick', 'curClick(' + curName + ')');
+          directions.setAttribute('onclick', "curClickD" + "(" + String(parsedName + 'directions') + ")");
+          mods.appendChild(directions);
+        }
+      });
+    });
+    </script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  
+  <body>
+    <!-- Home -->
+    <div class="site-wrapper">
+      <div class="container">
+      
+      <!-- Add Icon -->
+      <div id="add-icon">
+        <a href="add.html"><span class="glyphicon glyphicon-plus" style="font-size:20px"></span><br />Add Recipe</a>
+      </div>
+      
+      <!-- Settings Icon -->
+      <div id="settings-icon">
+        <span class="glyphicon glyphicon-cog" style="font-size:20px"></span><br />Settings
+      </div>
+      
+      <!-- Title Part -->
+      <div id="title">
+        <h1>RECIPE ASSISTANT</h1>
+      </div>
+      
+      <!-- Search Bar -->
+      <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+          <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search">
+          <span class="glyphicon glyphicon-search form-control-feedback" style="font-size:20px"></span>
+          </div>
+        </div>
+        <div class="col-sm-4"></div>
+      </div>
+
+      <!-- ingredients modal box-->
+      <div id="ingModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 class="modal-title">INGREDIENTS</h2>
+            </div>
+            <div class="modal-body" id="in_list">
+              <!-- sample layout -->
+              <!-- <p id="in_content"></p> -->
+              <!-- <input type="checkbox"> sample ingredient<br /> -->
+              <!-- <input type="checkbox"> sample ingredient<br /> -->
+              <!-- <input type="checkbox"> sample ingredient<br /> -->
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline-primary" data-dismiss="modal">CLOSE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- directions modal box -->
+      <div id="dirModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div id="back-icon">
+                <a href="home.html"><span class="glyphicon glyphicon-triangle-left" style="color:#196d4e"></span></a>
+              </div>
+              <h2 class="modal-title" id='recipe-title'></h2>
+              <div id="search-icon">
+                <span class="glyphicon glyphicon-search"></span>
+              </div>
+              <div id="home-icon">
+                <a href="home.html"><span class="glyphicon glyphicon-home" style="color:#196d4e"></span></a>
+              </div>
+            </div>
+            <div class="modal-body">
+
+              <div id="food-image-container">
+                <img id="food-image" class="img-responsive" src="">
+              </div>
+              <div class="container-fluid">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6">
+                  <div class="recipe-container">
+                  <div class="recipe-column" id="ingredients">
+                    <h2>Ingredients</h2>
+                    <ul id='direc_in_content'>
+<!--                       <li>1 cup of rice</li>
+                      <li>1 sheet of seaweed</li>
+                      <li>3 slices of sashimi-grade tuna</li>
+                      <li>3 slices of sashimi-grade salmon</li>
+                      <li>1/2 cup of rice vinegar</li>
+                      <li> -->
+                    </ul>
+                  </div>
+                  <div class="recipe-column" id="preparation">
+                    <h2>Preparation</h2>
+                    <p id='direc_step_content'></p>
+<!--                     <p>1. Put the rice on the seaweed.</p>
+                    <p>2. Put the fish on the rice.</p>
+                    <p>3. Roll it up.</p> -->
+                  </div>
+                  </div>
+                </div>
+                <div class="col-sm-3"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline-primary" data-dismiss="modal">CLOSE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div class="container-fluid" id='dish-container'>
+        <div class="row" id='row-container'>
+          <!-- <div class="col-sm-3">Recipe Name
+            <div class="recipe-tile">
+              <div class="links">
+                <span class="glyphicon glyphicon-info-sign" style="font-size:20px"></span>
+                <span class="glyphicon glyphicon-th-list" style="font-size:20px"></span>
+              </div>
+            </div>
+          </div> -->
+
+<!-- 
+          <div class="col-sm-3">Recipe Name
+            <div class="recipe-tile">
+
+              <div class="links">
+                <img src="https://i.ytimg.com/vi/jPLJbSp6vKY/maxresdefault.jpg" height='250' width='285'>
+
+              </div>
+
+
+              
+              <div class="links">
+                <span class="glyphicon glyphicon-info-sign" style="font-size:20px"></span>
+                <span class="glyphicon glyphicon-th-list" style="font-size:20px"></span>
+              </div>
+
+
+            </div>
+          </div> -->
+        </div>
+      </div>
+    
+    </div>
+    
+    <!-- Footer -->
+    <div class="container-fluid-2">
+      <div class="row-2">
+      <div class="col-sm-12">
+        <div id="footer" align="center">© TEAM SANS. CS160 SPRING 2017. ALL RIGHTS RESERVED.</div>
+      </div>
+      </div>
+    </div>
+    
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

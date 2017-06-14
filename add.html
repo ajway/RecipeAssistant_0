@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Recipe</title>
+
+    <!-- Bootstrap -->
+    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="css/add.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Jura:300|Alegreya+Sans+SC:300" rel="stylesheet">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <script>
+    $(document).ready(function(){
+      $("#submit").click(function(){
+        var recipeName = document.getElementById('Rname').value;
+        var imageLink = document.getElementById('url').value;
+
+        if (recipeName.length == 0) {
+          alert("Please provide a recipe name.");
+          return;
+        }
+
+        if (imageLink.length == 0) {
+          alert("Please provide an image url.");
+          return;
+        }
+
+        var ingre_list = document.getElementsByClassName('form-ing');
+
+        var tmps = ""
+        for (j = 0; j < ingre_list.length; j++) {
+          var curIngre = ingre_list[j].value;
+          if (curIngre.length != 0) {
+            if (j == ingre_list.length - 1) {
+              tmps = tmps + curIngre;
+            } else {
+              tmps = tmps + curIngre + "\n";
+            }
+          }
+        }
+
+        if (tmps.length == 0) {
+          console.log(tmps);
+          alert("Please provide at least one ingredient.");
+          return;
+        }
+
+        var direc_list = document.getElementsByClassName('form-inst');
+        var dirs = ""
+
+        for (i = 0; i < direc_list.length; i++) {
+          var curDirec = direc_list[i].value;
+
+          if (curDirec.length != 0) {
+            if (i == direc_list.length - 1) {
+              dirs = dirs + (i+1) + ". " + curDirec;
+            }
+            else {
+              dirs = dirs + (i+1) + ". " + curDirec + "\n";
+            }
+          }
+        }
+
+        if (dirs.length == 0) {
+          alert("Please provide at least one direction.");
+          return;
+        }
+
+        console.log(recipeName);
+        console.log(imageLink);
+        console.log(tmps);
+        console.log(dirs);
+
+        // String lower = (String) recipeName
+        // https://kzhe8vy1yd.execute-api.us-east-1.amazonaws.com/prod/TaskWS?TableName=Recipes
+        // https://kzhe8vy1yd.execute-api.us-east-1.amazonaws.com/prod/RecipeUpdate
+        $.post("https://kzhe8vy1yd.execute-api.us-east-1.amazonaws.com/prod/TaskWS", JSON.stringify({
+            "type": "POST", 
+            "data": {
+                "TableName": "Recipes",
+                //New item information to be posted 
+                "Item": {
+                    "RecipeName": recipeName.toLowerCase(), 
+                    "Ingredients" : tmps.toLowerCase(),
+                    "Directions" : dirs.toLowerCase(),
+                    "Image": imageLink,
+                    }}}), 
+        function(data, status){
+        alert(status);
+        });
+      });
+    });
+    </script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  
+  <body>
+    <div class="site-wrapper">
+    
+    <div class="container">
+    
+    <div id="navbar">
+    <div id="back-icon">
+      <script>
+      function goBack() {
+          window.history.back()
+      }
+      </script>
+      <a href="javascript:goBack()"><span class="glyphicon glyphicon-triangle-left"></span></a>
+    </div>
+
+    <h1>ADD RECIPE</h1>
+
+    <div id="search-icon">
+      <span class="glyphicon glyphicon-search"></span>
+    </div>
+
+    <div id="home-icon">
+      <a href="home.html"><span class="glyphicon glyphicon-home"></span></a>
+    </div>
+    </div>
+
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+      <div class="col-sm-3"></div>
+      <div class="col-sm-6">
+        <div class="form-group">Recipe name:
+        <input type="text" class="form-name" id='Rname' placeholder="Enter recipe name">
+        </div>
+      </div>
+      <div class="col-sm-3"></div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+          <div class="form-group">Image:  
+          <input type="text" class="form-url" id="url" placeholder="Enter url for dish image">
+          </div>
+          <!-- <div id="img"><button type="button" class="btn btn-outline-primary">UPLOAD IMAGE</button></div> -->
+        </div>
+        <div class="col-sm-3"></div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+          <div class="form-group" id='ilist2'>Ingredients:  
+          <input type="text" class="form-ing" id="ingres" placeholder="Enter ingredient">
+          </div>
+
+          <button id='addi' onclick='addI()' class="btn btn-outline-primary">ADD INGREDIENT</button>
+
+          <script >
+            function addI() {
+              var mi = document.createElement("input");
+              mi.setAttribute('class', 'form-ing');
+              mi.setAttribute('type', 'text');
+              mi.setAttribute('placeholder', 'Enter ingredient');
+              document.getElementById('ilist2').appendChild(mi);
+            }
+          </script>
+        </div>
+        <div class="col-sm-3"></div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+          <div class="form-group" id='dlist2'>Directions:  
+          <input type="text" class="form-inst" id="direcs" placeholder="Enter instruction">
+          </div>
+
+          <button id='addd' onclick='addD()' class="btn btn-outline-primary">ADD INSTRUCTION</button>
+
+          <script >
+            function addD() {
+              var mi = document.createElement("input");
+              mi.setAttribute('class', 'form-inst');
+              mi.setAttribute('type', 'text');
+              mi.setAttribute('placeholder', 'Enter instruction');
+              document.getElementById('dlist2').appendChild(mi);
+            }
+          </script>
+        </div>
+        <div class="col-sm-3"></div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+          <button type="submit" id="submit" class="btn btn-outline-primary">SUBMIT</button>
+        </div>
+        <div class="col-sm-3"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="container-fluid-2">
+      <div class="row-2">
+      <div class="col-sm-12">
+        <div id="footer" align="center">© TEAM SANS. CS160 SPRING 2017. ALL RIGHTS RESERVED.</div>
+      </div>
+      </div>
+    </div>
+    
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
